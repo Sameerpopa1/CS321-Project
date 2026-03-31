@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="top-bar">
+      <h1>My Stock Site</h1>
+      <div class="mode-switch">
+        <button id="desktopMode" class="active">Desktop</button>
+        <button id="mobileMode">Mobile</button>
+      </div>
+    </div>
+
+    <div id="screen" class="screen desktop">
+      <div id="listView">
+        <div class="stock-list" id="stockList"></div>
+      </div>
+
+      <div id="detailView" class="detail-view">
+        <button class="back-btn" id="backBtn">← Back</button>
+
+        <div class="summary-box">
+          <div>
+            <h2>Current Price</h2>
+            <p id="currentPrice"></p>
+          </div>
+          <div>
+            <h2>Invested</h2>
+            <p id="investedPrice"></p>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <h3 id="detailName"></h3>
+          <p><strong>Ticker:</strong> <span id="detailTicker"></span></p>
+          <p><strong>Shares:</strong> <span id="detailShares"></span></p>
+          <p><strong>Return:</strong> <span id="detailReturn"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
