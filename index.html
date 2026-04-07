@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+
+    <!-- Top header -->
+    <header class="top-header">
+      <div class="site-id">StockScope</div>
+
+      <div class="search-area">
+        <input type="text" placeholder="Search stocks..." />
+        <button type="button">Search</button>
+      </div>
+
+      <nav class="utilities">
+        <a href="#">Login</a>
+        <a href="#">Portfolio</a>
+        <a href="#">Settings</a>
+      </nav>
+    </header>
+
+    <!-- Top sections -->
+    <nav class="sections-nav">
+      <a href="#">Market</a>
+      <a href="#">Watchlist</a>
+      <a href="#">Portfolio</a>
+      <a href="#">News</a>
+      <a href="#">Insights</a>
+    </nav>
+
+    <!-- Main layout -->
+    <div class="main-layout">
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-card current-page">
+          <p class="sidebar-label">You are here</p>
+          <h2>Watchlist</h2>
+          <span>Dashboard overview</span>
+        </div>
+
+        <div class="sidebar-card">
+          <p class="sidebar-label">Local navigation</p>
+          <a href="#">Top Movers</a>
+          <a href="#">Technology</a>
+          <a href="#">Energy</a>
+          <a href="#">Healthcare</a>
+          <a href="#">Favorites</a>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <main class="content">
+        <section id="listView">
+          <div class="content-header">
+            <div>
+              <p class="eyebrow">Overview</p>
+              <h1>My Stock Site</h1>
+              <span>Review your selected stocks and open details.</span>
+            </div>
+          </div>
+
+          <div id="screen" class="screen">
+            <div class="stock-list" id="stockList"></div>
+          </div>
+        </section>
+
+        <section id="detailView" class="detail-view">
+          <button class="back-btn" id="backBtn">← Back to Watchlist</button>
+
+          <div class="hero-card">
+            <div>
+              <p class="hero-label">Selected Stock</p>
+              <h2 id="detailName"></h2>
+              <p id="detailTicker" class="hero-ticker"></p>
+            </div>
+
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <span>Current Price</span>
+                <strong id="currentPrice"></strong>
+              </div>
+              <div class="hero-stat">
+                <span>Invested Amount</span>
+                <strong id="investedPrice"></strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <div class="detail-card">
+              <p class="card-label">Shares</p>
+              <h3 id="detailShares"></h3>
+            </div>
+
+            <div class="detail-card">
+              <p class="card-label">Return</p>
+              <h3 id="detailReturn"></h3>
+            </div>
+
+            <div class="detail-card">
+              <p class="card-label">Daily Change</p>
+              <h3 id="detailChange"></h3>
+            </div>
+
+            <div class="detail-card">
+              <p class="card-label">Sector</p>
+              <h3 id="detailSector"></h3>
+            </div>
+          </div>
+
+          <div class="detail-card note-card">
+            <p class="card-label">Company Note</p>
+            <p id="detailNote"></p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-nav">
+      <a href="#">About</a>
+      <a href="#">Support</a>
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
