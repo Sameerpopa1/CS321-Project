@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stock Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div class="page">
 
-    <!-- Top header -->
+    <!-- Header -->
     <header class="top-header">
       <div class="site-id">StockScope</div>
 
       <div class="search-area">
-        <input type="text" placeholder="Search stocks..." />
-        <button type="button">Search</button>
+        <input id="searchInput" type="text" placeholder="Search stocks..." />
+        <button id="searchBtn" type="button">Search</button>
       </div>
 
       <nav class="utilities">
@@ -25,16 +25,26 @@
       </nav>
     </header>
 
-    <!-- Top sections -->
+    <!-- Nav -->
     <nav class="sections-nav">
+    <div class="left-links">
       <a href="#">Market</a>
       <a href="#">Watchlist</a>
       <a href="#">Portfolio</a>
       <a href="#">News</a>
       <a href="#">Insights</a>
-    </nav>
+    </div>
 
-    <!-- Main layout -->
+    <div class="right-links">
+      <a href="#">About</a>
+      <a href="#">Support</a>
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#" id="contactLink">Contact</a>
+    </div>
+  </nav>
+
+    <!-- Main -->
     <div class="main-layout">
 
       <!-- Sidebar -->
@@ -48,10 +58,12 @@
         <div class="sidebar-card">
           <p class="sidebar-label">Local navigation</p>
           <a href="#">Top Movers</a>
-          <a href="#">Technology</a>
-          <a href="#">Energy</a>
-          <a href="#">Healthcare</a>
-          <a href="#">Favorites</a>
+          <a href="#" class="sectorLink" data-sector="Technology">Technology</a>
+          <a href="#" class="sectorLink" data-sector="Energy">Energy</a>
+          <a href="#" class="sectorLink" data-sector="Healthcare">Healthcare</a>
+          <a href="#" class="sectorLink" data-sector="Finance">Finance</a>
+          <a href="#" class="sectorLink" data-sector="Consumer">Consumer</a>
+          <a href="#" id="favoritesLink">Favorites</a>
         </div>
         <!-- Alert Panel -->
           <div class="sidebar-card alert-panel">
@@ -101,13 +113,17 @@
           <div class="content-header">
             <div>
               <p class="eyebrow">Overview</p>
-              <h1>My Stock Site</h1>
+              <h1 id="pageTitle">My Stock Site</h1>
               <span>Review your selected stocks and open details.</span>
             </div>
+
+            <button id="backToAllBtn" style="display:none;" class="back-btn">
+              ← Back
+            </button>
           </div>
 
-          <div id="screen" class="screen">
-            <div class="stock-list" id="stockList"></div>
+          <div class="screen">
+            <div id="stockList" class="stock-list"></div>
           </div>
         </section>
 
