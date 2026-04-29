@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-const stocks = [
-  { name: "A", ticker: "AAA", price: 100.25, invest: 800, shares: 5, return: "+10.4%", change: "+1.3%", sector: "Technology", note: "Sample stock A." },
-  { name: "B", ticker: "BBB", price: 214.8, invest: 1500, shares: 6, return: "-3.2%", change: "-0.8%", sector: "Energy", note: "Sample stock B." },
-  { name: "C", ticker: "CCC", price: 58.4, invest: 300, shares: 4, return: "+5.1%", change: "+0.6%", sector: "Healthcare", note: "Sample stock C." }
-];
-let activeAlerts = [];
-let currentDetailIndex = null;
-=======
 const backToAllBtn = document.getElementById("backToAllBtn");
 const pageTitle = document.getElementById("pageTitle");
->>>>>>> a9653b0 (Add some details)
+
+let activeAlerts = [];
+let currentDetailIndex = null;
 
 const list = document.getElementById("stockList");
 const detail = document.getElementById("detailView");
@@ -241,4 +234,100 @@ document.getElementById("quickAlertBtn").onclick = () => {
   document.getElementById("quickAlertPrice").value = "";
   quickSuccess.textContent = `✓ Alert set for ${stock.ticker} ${condition} $${priceResult.value.toFixed(2)}`;
   setTimeout(() => { quickSuccess.textContent = ""; }, 3500);
+};
+
+favoritesLink.onclick = (e) => {
+  e.preventDefault();
+
+  detail.classList.remove("active");
+  listView.style.display = "block";
+
+  showingFavorites = true;
+  currentSector = "All";
+  searchTerm = "";
+  searchInput.value = "";
+
+  pageTitle.textContent = "Favorite Stocks";
+  backToAllBtn.style.display = "block";
+
+  renderStocks();
+};
+
+backToAllBtn.onclick = () => {
+  showingFavorites = false;
+  currentSector = "All";
+  searchTerm = "";
+  searchInput.value = "";
+
+  pageTitle.textContent = "My Stock Site";
+  backToAllBtn.style.display = "none";
+
+  detail.classList.remove("active");
+  listView.style.display = "block";
+
+  renderStocks();
+};
+
+const sectorLinks = document.querySelectorAll(".sectorLink");
+
+sectorLinks.forEach((link) => {
+  link.onclick = (e) => {
+    e.preventDefault();
+
+    detail.classList.remove("active");
+    listView.style.display = "block";
+
+    showingFavorites = false;
+    currentSector = link.dataset.sector;
+    searchTerm = "";
+    searchInput.value = "";
+
+    pageTitle.textContent = currentSector + " Stocks";
+    backToAllBtn.style.display = "block";
+
+    renderStocks();
+  };
+});
+
+searchBtn.onclick = () => {
+  detail.classList.remove("active");
+  listView.style.display = "block";
+
+  showingFavorites = false;
+  currentSector = "All";
+  searchTerm = searchInput.value.trim().toLowerCase();
+
+  pageTitle.textContent = searchTerm === "" ? "My Stock Site" : `Search Results: ${searchInput.value}`;
+  backToAllBtn.style.display = searchTerm === "" ? "none" : "block";
+
+  renderStocks();
+};
+
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    searchBtn.click();
+  }
+});
+
+const contactLink = document.getElementById("contactLink");
+const footerContactLink = document.getElementById("footerContactLink");
+const contactModal = document.getElementById("contactModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
+
+function openContactModal(e) {
+  e.preventDefault();
+  contactModal.classList.add("active");
+}
+
+contactLink.onclick = openContactModal;
+footerContactLink.onclick = openContactModal;
+
+closeModalBtn.onclick = () => {
+  contactModal.classList.remove("active");
+};
+
+contactModal.onclick = (e) => {
+  if (e.target === contactModal) {
+    contactModal.classList.remove("active");
+  }
 };
