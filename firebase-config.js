@@ -7,8 +7,8 @@ const FIREBASE_CONFIG = {
   authDomain: "stockscope-ea6f2.firebaseapp.com",
   projectId: "stockscope-ea6f2",
   storageBucket: "stockscope-ea6f2.firebasestorage.app",
-  messagingSenderId: "1:437693959105:web:ad3c84e21621301e6cbd40",
-  appId: "G-007JZ957L2"
+  messagingSenderId: "437693959105",
+  appId: "1:437693959105:web:ad3c84e21621301e6cbd40"
 };
 
 const app = initializeApp(FIREBASE_CONFIG);
