@@ -123,7 +123,7 @@ function renderStocks(stocks) {
 
       <div class="card-actions">
         <button class="view-btn" data-id="${stockId}">View Details</button>
-        <button class="heart-btn" data-id="${stockId}" data-ticker="${stock.ticker}">♥</button>
+        <button class="heart-btn ${stock.favorite ? "active" : ""}" data-id="${stockId}" data-ticker="${stock.ticker}">♥</button>
       </div>
     `;
 
