@@ -1,722 +1,353 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+const backToAllBtn = document.getElementById("backToAllBtn");
+const pageTitle = document.getElementById("pageTitle");
+
+let currentDetailId = null;
+
+const list = document.getElementById("stockList");
+const detail = document.getElementById("detailView");
+const listView = document.getElementById("listView");
+const favoritesLink = document.getElementById("favoritesLink");
+const searchInput = document.getElementById("searchInput");
+const searchBtn = document.getElementById("searchBtn");
+
+const stocks = [
+  { id: "AAA", name: "A", ticker: "AAA", price: 100.25, invest: 800, shares: 5, return: "+10.4%", change: "+1.3%", sector: "Technology", note: "Sample stock A.", favorite: false },
+  { id: "BBB", name: "B", ticker: "BBB", price: 214.80, invest: 1500, shares: 6, return: "-3.2%", change: "-0.8%", sector: "Energy", note: "Sample stock B.", favorite: false },
+  { id: "CCC", name: "C", ticker: "CCC", price: 58.40, invest: 300, shares: 4, return: "+5.1%", change: "+0.6%", sector: "Healthcare", note: "Sample stock C.", favorite: false },
+  { id: "DDD", name: "D", ticker: "DDD", price: 142.35, invest: 950, shares: 7, return: "+2.8%", change: "+0.4%", sector: "Finance", note: "Sample stock D.", favorite: false },
+  { id: "EEE", name: "E", ticker: "EEE", price: 76.90, invest: 620, shares: 8, return: "-1.7%", change: "-0.3%", sector: "Consumer", note: "Sample stock E.", favorite: false },
+  { id: "FFF", name: "F", ticker: "FFF", price: 188.10, invest: 1200, shares: 6, return: "+7.6%", change: "+1.1%", sector: "Technology", note: "Sample stock F.", favorite: false },
+  { id: "GGG", name: "G", ticker: "GGG", price: 39.75, invest: 400, shares: 10, return: "-4.5%", change: "-0.9%", sector: "Energy", note: "Sample stock G.", favorite: false },
+  { id: "HHH", name: "H", ticker: "HHH", price: 251.60, invest: 1800, shares: 7, return: "+12.2%", change: "+2.0%", sector: "Healthcare", note: "Sample stock H.", favorite: false },
+  { id: "III", name: "I", ticker: "III", price: 91.45, invest: 700, shares: 8, return: "+3.9%", change: "+0.7%", sector: "Finance", note: "Sample stock I.", favorite: false },
+  { id: "JJJ", name: "J", ticker: "JJJ", price: 67.20, invest: 500, shares: 7, return: "-2.6%", change: "-0.5%", sector: "Consumer", note: "Sample stock J.", favorite: false },
+  { id: "KKK", name: "K", ticker: "KKK", price: 305.15, invest: 2100, shares: 6, return: "+15.0%", change: "+2.4%", sector: "Technology", note: "Sample stock K.", favorite: false },
+  { id: "LLL", name: "L", ticker: "LLL", price: 48.85, invest: 350, shares: 7, return: "-6.1%", change: "-1.2%", sector: "Energy", note: "Sample stock L.", favorite: false },
+  { id: "MMM", name: "M", ticker: "MMM", price: 129.50, invest: 1000, shares: 8, return: "+4.2%", change: "+0.9%", sector: "Healthcare", note: "Sample stock M.", favorite: false },
+  { id: "NNN", name: "N", ticker: "NNN", price: 84.30, invest: 760, shares: 9, return: "+1.8%", change: "+0.2%", sector: "Finance", note: "Sample stock N.", favorite: false },
+  { id: "OOO", name: "O", ticker: "OOO", price: 173.95, invest: 1300, shares: 7, return: "-0.9%", change: "-0.1%", sector: "Consumer", note: "Sample stock O.", favorite: false },
+  { id: "PPP", name: "P", ticker: "PPP", price: 226.40, invest: 1600, shares: 7, return: "+8.7%", change: "+1.5%", sector: "Technology", note: "Sample stock P.", favorite: false },
+  { id: "QQQ", name: "Q", ticker: "QQQ", price: 33.60, invest: 280, shares: 8, return: "-5.4%", change: "-1.0%", sector: "Energy", note: "Sample stock Q.", favorite: false },
+  { id: "RRR", name: "R", ticker: "RRR", price: 118.75, invest: 900, shares: 7, return: "+6.3%", change: "+1.0%", sector: "Healthcare", note: "Sample stock R.", favorite: false },
+  { id: "SSS", name: "S", ticker: "SSS", price: 97.05, invest: 850, shares: 9, return: "-1.1%", change: "-0.2%", sector: "Finance", note: "Sample stock S.", favorite: false },
+  { id: "TTT", name: "T", ticker: "TTT", price: 62.45, invest: 520, shares: 8, return: "+2.5%", change: "+0.3%", sector: "Consumer", note: "Sample stock T.", favorite: false },
+  { id: "UUU", name: "U", ticker: "UUU", price: 199.99, invest: 1400, shares: 7, return: "+9.4%", change: "+1.7%", sector: "Technology", note: "Sample stock U.", favorite: false },
+  { id: "VVV", name: "V", ticker: "VVV", price: 44.25, invest: 330, shares: 7, return: "-3.8%", change: "-0.6%", sector: "Energy", note: "Sample stock V.", favorite: false },
+  { id: "WWW", name: "W", ticker: "WWW", price: 156.70, invest: 1100, shares: 7, return: "+5.9%", change: "+0.8%", sector: "Healthcare", note: "Sample stock W.", favorite: false },
+  { id: "XXX", name: "X", ticker: "XXX", price: 88.88, invest: 720, shares: 8, return: "-2.0%", change: "-0.4%", sector: "Finance", note: "Sample stock X.", favorite: false },
+  { id: "YYY", name: "Y", ticker: "YYY", price: 134.20, invest: 980, shares: 7, return: "+3.4%", change: "+0.5%", sector: "Consumer", note: "Sample stock Y.", favorite: false },
+  { id: "ZZZ", name: "Z", ticker: "ZZZ", price: 269.30, invest: 1900, shares: 7, return: "+11.8%", change: "+1.9%", sector: "Technology", note: "Sample stock Z.", favorite: false }
+];
+
+let activeAlerts = [];
+let showingFavorites = false;
+let currentSector = "All";
+
+function getValueClass(value) {
+  return value.startsWith("-") ? "negative" : "positive";
 }
 
-:root {
-  --bg: #f3f6fb;
-  --card: #ffffff;
-  --soft: #f8fafc;
-  --text: #0f172a;
-  --subtext: #64748b;
-  --border: #dbe3ee;
-  --primary: #0f172a;
-  --accent: #2563eb;
-  --accent-soft: #e8f0ff;
-  --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-  --radius: 20px;
+function sortStocksAlphabetically(arr) {
+  return [...arr].sort((a, b) => a.name.localeCompare(b.name));
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+function getAllStocks() {
+  return stocks;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
+function getStocksBySector(sector) {
+  if (!sector || sector === "All") return stocks;
+  return stocks.filter((s) => s.sector === sector);
 }
 
-.page {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
+function searchStocks(term) {
+  if (!term) return stocks;
+  const t = term.toLowerCase();
+  return stocks.filter((s) =>
+    s.name.toLowerCase() === t ||
+    s.ticker.toLowerCase() === t ||
+    s.sector.toLowerCase() === t
+  );
 }
 
-/* Top header */
-.top-header {
-  display: grid;
-  grid-template-columns: 220px 1fr 320px;
-  gap: 18px;
-  align-items: center;
-  background: var(--primary);
-  color: white;
-  padding: 20px 24px;
-  border-radius: 24px 24px 0 0;
+function validateTicker(value) {
+  const trimmed = (value ?? "").trim().toUpperCase();
+  if (!trimmed) return { valid: false, msg: "Ticker is required." };
+  if (!/^[A-Z]{1,5}$/.test(trimmed)) return { valid: false, msg: "Enter 1-5 letters (e.g. AAPL)." };
+  return { valid: true, value: trimmed };
 }
 
-.site-id {
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+function validatePrice(value) {
+  const num = parseFloat(value);
+  if (value === "" || isNaN(num)) return { valid: false, msg: "Enter a valid price." };
+  if (num <= 0) return { valid: false, msg: "Price must be greater than $0." };
+  return { valid: true, value: num };
 }
 
-.search-area {
-  display: flex;
-  gap: 10px;
+function validateAlertForm(fields) {
+  const errors = {};
+  const tickerResult = validateTicker(fields.ticker);
+  const priceResult = validatePrice(fields.price);
+  if (!tickerResult.valid) errors.ticker = tickerResult.msg;
+  if (!priceResult.valid) errors.price = priceResult.msg;
+  if (fields.condition !== "above" && fields.condition !== "below") errors.condition = "Invalid condition.";
+  if (Object.keys(errors).length > 0) return { errors };
+  return { errors: {}, parsed: { ticker: tickerResult.value, price: priceResult.value, condition: fields.condition } };
 }
 
-.search-area input {
-  flex: 1;
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  font-size: 15px;
-}
+function renderStocks(visibleStocks) {
+  list.innerHTML = "";
+  const sorted = sortStocksAlphabetically(visibleStocks);
 
-.search-area button {
-  padding: 14px 18px;
-  border: none;
-  border-radius: 12px;
-  background: var(--accent);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.utilities {
-  display: flex;
-  justify-content: flex-end;
-  gap: 18px;
-  font-weight: 600;
-  color: #d8e1f0;
-}
-
-/* Sections nav */
-.sections-nav {
-  display: flex;
-  gap: 24px;
-  background: #1e293b;
-  color: white;
-  padding: 14px 24px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.sections-nav a {
-  color: #e5edf8;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-/* Main layout */
-.main-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 24px;
-  padding: 24px;
-  background: #eef3f9;
-  border-radius: 0 0 24px 24px;
-  box-shadow: var(--shadow);
-}
-
-/* Sidebar */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.sidebar-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
-}
-
-.sidebar-label {
-  font-size: 13px;
-  color: var(--subtext);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 12px;
-}
-
-.current-page h2 {
-  font-size: 24px;
-  margin-bottom: 8px;
-}
-
-.current-page span {
-  color: var(--subtext);
-  font-size: 14px;
-}
-
-.sidebar-card a {
-  display: block;
-  padding: 10px 0;
-  color: var(--text);
-  border-bottom: 1px solid #edf2f7;
-  font-size: 15px;
-}
-
-.sidebar-card a:last-child {
-  border-bottom: none;
-}
-
-/* Content */
-.content {
-  min-width: 0;
-}
-
-.content-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 20px;
-  margin-bottom: 18px;
-}
-
-.eyebrow {
-  font-size: 13px;
-  color: var(--subtext);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 6px;
-}
-
-.content-header h1 {
-  font-size: 36px;
-  margin-bottom: 6px;
-}
-
-.content-header span {
-  color: var(--subtext);
-  font-size: 15px;
-}
-
-.screen {
-  width: 100%;
-  max-width: 100%;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(219, 227, 238, 0.9);
-  border-radius: 24px;
-  padding: 22px;
-  transition: 0.3s ease;
-}
-
-.stock-list {
-  display: grid;
-  gap: 16px;
-}
-
-.stock-card {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr auto;
-  align-items: center;
-  gap: 18px;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-  transition: 0.2s ease;
-}
-
-.stock-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.08);
-}
-
-.stock-left h3 {
-  font-size: 24px;
-  margin-bottom: 6px;
-}
-
-.stock-left p {
-  color: var(--subtext);
-  font-size: 14px;
-}
-
-.stock-middle {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.price {
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.mini-label {
-  font-size: 14px;
-  color: var(--subtext);
-}
-
-.stock-card button {
-  border: none;
-  background: var(--accent);
-  color: white;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Detail */
-.detail-view {
-  display: none;
-  animation: slideDown 0.3s ease;
-}
-
-.detail-view.active {
-  display: block;
-}
-
-.back-btn {
-  border: none;
-  background: #dde7f5;
-  color: var(--text);
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-bottom: 18px;
-}
-
-.hero-card {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  padding: 26px;
-  border-radius: 24px;
-  margin-bottom: 18px;
-}
-
-.hero-label {
-  font-size: 13px;
-  opacity: 0.75;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.hero-card h2 {
-  font-size: 34px;
-  margin-bottom: 8px;
-}
-
-.hero-ticker {
-  color: rgba(255,255,255,0.75);
-}
-
-.hero-stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(150px, 1fr));
-  gap: 14px;
-  width: 100%;
-  max-width: 420px;
-}
-
-.hero-stat {
-  background: rgba(255,255,255,0.08);
-  border-radius: 18px;
-  padding: 16px;
-}
-
-.hero-stat span {
-  display: block;
-  font-size: 13px;
-  opacity: 0.8;
-  margin-bottom: 8px;
-}
-
-.hero-stat strong {
-  font-size: 24px;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.detail-card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
-}
-
-.card-label {
-  font-size: 13px;
-  color: var(--subtext);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 10px;
-}
-
-.detail-card h3 {
-  font-size: 24px;
-}
-
-.note-card p:last-child {
-  line-height: 1.7;
-  color: var(--text);
-}
-
-/* Value colors */
-.positive {
-  color: #16a34a;
-}
-
-.negative {
-  color: #dc2626;
-}
-
-/* Footer */
-.footer-nav {
-  margin-top: 22px;
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  background: #0f172a;
-  color: #d8e1f0;
-  padding: 18px 24px;
-  border-radius: 18px;
-  font-size: 14px;
-}
-
-/* Animation */
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
+  if (sorted.length === 0) {
+    list.innerHTML = `<p>No stocks found.</p>`;
+    return;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  sorted.forEach((stock) => {
+    const card = document.createElement("div");
+    card.className = "stock-card";
+
+    card.innerHTML = `
+      <div class="stock-left">
+        <h3>${stock.name}</h3>
+        <p>${stock.ticker}</p>
+      </div>
+      <div class="stock-middle">
+        <span class="price">$${stock.price.toFixed(2)}</span>
+        <span class="mini-label ${getValueClass(stock.return)}">${stock.return}</span>
+      </div>
+      <div class="card-actions">
+        <button data-id="${stock.id}" class="view-btn">View Details</button>
+        <button class="heart-btn ${stock.favorite ? "active" : ""}" data-id="${stock.id}" data-ticker="${stock.ticker}">♥</button>
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
+
+  list.querySelectorAll(".view-btn").forEach((btn) =>
+    btn.addEventListener("click", () => showDetail(btn.dataset.id))
+  );
+  list.querySelectorAll(".heart-btn").forEach((btn) =>
+    btn.addEventListener("click", () => toggleFavorite(btn.dataset.id))
+  );
+}
+
+function toggleFavorite(stockId) {
+  const stock = stocks.find((s) => s.id === stockId);
+  if (!stock) return;
+  stock.favorite = !stock.favorite;
+  if (showingFavorites) {
+    renderStocks(stocks.filter((s) => s.favorite));
+  } else if (currentSector !== "All") {
+    renderStocks(getStocksBySector(currentSector));
+  } else {
+    renderStocks(getAllStocks());
   }
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
-  .top-header {
-    grid-template-columns: 1fr;
+function showDetail(stockId) {
+  const stock = stocks.find((s) => s.id === stockId);
+  if (!stock) return;
+  currentDetailId = stockId;
+
+  document.getElementById("detailName").textContent = stock.name;
+  document.getElementById("detailTicker").textContent = stock.ticker;
+  document.getElementById("quickAlertTicker").textContent = stock.ticker;
+  document.getElementById("quickAlertPrice").value = "";
+  document.getElementById("quickAlertError").textContent = "";
+  document.getElementById("quickAlertSuccess").textContent = "";
+
+  document.getElementById("currentPrice").textContent = `$${stock.price.toFixed(2)}`;
+  document.getElementById("investedPrice").textContent = `$${stock.invest.toFixed(2)}`;
+  document.getElementById("detailShares").textContent = stock.shares;
+  document.getElementById("detailReturn").textContent = stock.return;
+  document.getElementById("detailReturn").className = getValueClass(stock.return);
+  document.getElementById("detailChange").textContent = stock.change;
+  document.getElementById("detailChange").className = getValueClass(stock.change);
+  document.getElementById("detailSector").textContent = stock.sector;
+  document.getElementById("detailNote").textContent = stock.note;
+
+  listView.style.display = "none";
+  detail.classList.add("active");
+}
+
+document.getElementById("backBtn").onclick = () => {
+  detail.classList.remove("active");
+  listView.style.display = "block";
+};
+
+function renderAlerts() {
+  const banner = document.getElementById("alertsBanner");
+  const alertsList = document.getElementById("alertsList");
+
+  if (activeAlerts.length === 0) {
+    banner.style.display = "none";
+    return;
   }
 
-  .utilities {
-    justify-content: flex-start;
+  banner.style.display = "block";
+  alertsList.innerHTML = "";
+
+  activeAlerts.forEach((alert) => {
+    const tag = document.createElement("div");
+    tag.className = "alert-tag";
+    tag.innerHTML = `
+      <span class="alert-ticker">${alert.ticker}</span>
+      <span class="alert-condition">${alert.condition === "above" ? "↑" : "↓"} $${alert.price.toFixed(2)}</span>
+      <span class="alert-notify">${alert.notify}</span>
+      <button class="remove-alert-btn" data-id="${alert.id}" type="button">✕</button>
+    `;
+    alertsList.appendChild(tag);
+  });
+
+  alertsList.querySelectorAll(".remove-alert-btn").forEach((btn) => {
+    btn.onclick = () => {
+      activeAlerts = activeAlerts.filter((a) => a.id !== btn.dataset.id);
+      renderAlerts();
+    };
+  });
+}
+
+document.getElementById("clearAlerts").onclick = () => {
+  activeAlerts = [];
+  renderAlerts();
+};
+
+document.getElementById("submitAlert").onclick = () => {
+  const tickerError = document.getElementById("tickerError");
+  const priceError = document.getElementById("priceError");
+  const formSuccess = document.getElementById("formSuccess");
+  tickerError.textContent = "";
+  priceError.textContent = "";
+  formSuccess.textContent = "";
+
+  const { errors, parsed } = validateAlertForm({
+    ticker: document.getElementById("alertTicker").value,
+    price: document.getElementById("alertPrice").value,
+    condition: document.getElementById("alertCondition").value,
+  });
+  const notify = document.getElementById("alertNotify").value;
+
+  if (errors.ticker) tickerError.textContent = errors.ticker;
+  if (errors.price) priceError.textContent = errors.price;
+  if (Object.keys(errors).length > 0) return;
+
+  activeAlerts.push({ ...parsed, notify, id: String(Date.now()) });
+  document.getElementById("alertTicker").value = "";
+  document.getElementById("alertPrice").value = "";
+  formSuccess.textContent = `✓ Alert set: ${parsed.ticker} ${parsed.condition} $${parsed.price.toFixed(2)} via ${notify}`;
+  setTimeout(() => { formSuccess.textContent = ""; }, 3500);
+  renderAlerts();
+};
+
+document.getElementById("alertTicker").addEventListener("input", function () {
+  const { errors } = validateAlertForm({ ticker: this.value, price: "1", condition: "above" });
+  document.getElementById("tickerError").textContent = this.value.trim() ? (errors.ticker ?? "") : "";
+});
+
+document.getElementById("quickAlertBtn").onclick = () => {
+  const quickError = document.getElementById("quickAlertError");
+  const quickSuccess = document.getElementById("quickAlertSuccess");
+  quickError.textContent = "";
+  quickSuccess.textContent = "";
+
+  const stock = stocks.find((s) => s.id === currentDetailId);
+  if (!stock) return;
+
+  const { errors, parsed } = validateAlertForm({
+    ticker: stock.ticker,
+    price: document.getElementById("quickAlertPrice").value,
+    condition: document.getElementById("quickAlertCondition").value,
+  });
+
+  if (errors.price) { quickError.textContent = errors.price; return; }
+
+  activeAlerts.push({ ...parsed, notify: "email", id: String(Date.now()) });
+  document.getElementById("quickAlertPrice").value = "";
+  quickSuccess.textContent = `✓ Alert set for ${stock.ticker} ${parsed.condition} $${parsed.price.toFixed(2)}`;
+  setTimeout(() => { quickSuccess.textContent = ""; }, 3500);
+  renderAlerts();
+};
+
+favoritesLink.onclick = (e) => {
+  e.preventDefault();
+  detail.classList.remove("active");
+  listView.style.display = "block";
+  showingFavorites = true;
+  currentSector = "All";
+  searchInput.value = "";
+  pageTitle.textContent = "Favorite Stocks";
+  backToAllBtn.style.display = "block";
+  renderStocks(stocks.filter((s) => s.favorite));
+};
+
+backToAllBtn.onclick = () => {
+  showingFavorites = false;
+  currentSector = "All";
+  searchInput.value = "";
+  pageTitle.textContent = "My Stock Site";
+  backToAllBtn.style.display = "none";
+  detail.classList.remove("active");
+  listView.style.display = "block";
+  renderStocks(getAllStocks());
+};
+
+const sectorLinks = document.querySelectorAll(".sectorLink");
+
+sectorLinks.forEach((link) => {
+  link.onclick = (e) => {
+    e.preventDefault();
+    detail.classList.remove("active");
+    listView.style.display = "block";
+    showingFavorites = false;
+    currentSector = link.dataset.sector;
+    searchInput.value = "";
+    pageTitle.textContent = currentSector + " Stocks";
+    backToAllBtn.style.display = "block";
+    renderStocks(getStocksBySector(currentSector));
+  };
+});
+
+searchBtn.onclick = () => {
+  detail.classList.remove("active");
+  listView.style.display = "block";
+  showingFavorites = false;
+  currentSector = "All";
+  const term = searchInput.value.trim().toLowerCase();
+  pageTitle.textContent = term === "" ? "My Stock Site" : `Search Results: ${searchInput.value}`;
+  backToAllBtn.style.display = term === "" ? "none" : "block";
+  renderStocks(searchStocks(term));
+};
+
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    searchBtn.click();
   }
+});
 
-  .main-layout {
-    grid-template-columns: 1fr;
+const contactLink = document.getElementById("contactLink");
+const footerContactLink = document.getElementById("footerContactLink");
+const contactModal = document.getElementById("contactModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
+
+function openContactModal(e) {
+  e.preventDefault();
+  contactModal.classList.add("active");
+}
+
+contactLink.onclick = openContactModal;
+footerContactLink.onclick = openContactModal;
+
+closeModalBtn.onclick = () => {
+  contactModal.classList.remove("active");
+};
+
+contactModal.onclick = (e) => {
+  if (e.target === contactModal) {
+    contactModal.classList.remove("active");
   }
+};
 
-  .sidebar {
-    order: 2;
-  }
-}
-
-@media (max-width: 800px) {
-  .stock-card {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-card {
-    flex-direction: column;
-  }
-
-  .hero-stats {
-    grid-template-columns: 1fr;
-    max-width: 100%;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .sections-nav {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 600px) {
-  .page {
-    padding: 14px;
-  }
-
-  .content-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .content-header h1 {
-    font-size: 30px;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-nav {
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-}
-/* Alert Form */
-.alert-panel {
-  border: 1.5px solid #c7d9f5;
-  background: #f5f9ff;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-bottom: 14px;
-}
-
-.form-group label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.form-group input,
-.form-group select {
-  padding: 10px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-  background: white;
-  color: var(--text);
-  transition: border-color 0.2s;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  border-color: var(--accent);
-}
-
-.field-error {
-  font-size: 12px;
-  color: #dc2626;
-  min-height: 16px;
-  display: block;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 12px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.submit-btn:hover {
-  background: #1d4ed8;
-}
-
-.form-success {
-  margin-top: 10px;
-  font-size: 13px;
-  color: #16a34a;
-  font-weight: 600;
-  min-height: 18px;
-}
-
-/* Alerts Banner */
-.alerts-banner {
-  background: white;
-  border: 1.5px solid #c7d9f5;
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.07);
-}
-
-.alerts-banner-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.alerts-banner-header button {
-  font-size: 12px;
-  color: var(--subtext);
-  background: none;
-  border: 1px solid var(--border);
-  padding: 4px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.alerts-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.alert-tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #e8f0ff;
-  border: 1px solid #bdd0f8;
-  border-radius: 10px;
-  padding: 7px 12px;
-  font-size: 13px;
-}
-
-.alert-ticker {
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.alert-notify {
-  color: var(--subtext);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.remove-alert-btn {
-  background: none;
-  border: none;
-  color: var(--subtext);
-  cursor: pointer;
-  font-size: 13px;
-  padding: 0 2px;
-}
-
-.remove-alert-btn:hover {
-  color: #dc2626;
-}
-
-/* Quick Alert */
-.quick-alert-card {
-  margin-top: 16px;
-}
-
-.quick-alert-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.quick-alert-row input {
-  flex: 1;
-  padding: 10px 12px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-}
-
-.quick-alert-row input:focus {
-  border-color: var(--accent);
-}
-
-.quick-alert-row select {
-  padding: 10px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-  background: white;
-}
-
-.quick-alert-row button {
-  padding: 10px 16px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.sections-nav {
-  justify-content: space-between;
-  align-items: center;
-}
-
-.left-links,
-.right-links {
-  display: flex;
-  gap: 24px;
-}
-
-.card-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.heart-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  padding: 0;
-}
-
-.heart-btn.active {
-  background: #ef4444;
-  color: white;
-}
-
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-overlay.active {
-  display: flex;
-}
-
-.modal-box {
-  width: 90%;
-  max-width: 520px;
-  background: white;
-  border-radius: 22px;
-  padding: 30px;
-  position: relative;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
-}
-
-.modal-box h2 {
-  margin-bottom: 18px;
-}
-
-.modal-box p {
-  margin-bottom: 10px;
-  color: #334155;
-}
-
-.modal-close {
-  position: absolute;
-  top: 16px;
-  right: 18px;
-  border: none;
-  background: #eef3f9;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  font-size: 22px;
-  cursor: pointer;
-}
+renderStocks(getAllStocks());
