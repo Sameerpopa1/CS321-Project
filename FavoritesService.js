@@ -1,48 +1,32 @@
-import { db } from "../firebase.js";
-import {
-  doc,
-  setDoc,
-  deleteDoc,
-  getDocs,
-  collection,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
- 
-const USERS_COLLECTION = "users";
-const FAVORITES_SUBCOLLECTION = "favorites";
- 
-function getFavoriteRef(userId, stockId) {
-  return doc(db, USERS_COLLECTION, userId, FAVORITES_SUBCOLLECTION, stockId);
-}
- 
+// favoritesService.js - business logic for favorite stocks.
+// Application layer. Database calls go through FavoritesRepository.
+
+import { favoritesRepository } from "../db/FavoritesRepository.js";
+
 export async function getFavorites(userId) {
   if (!userId) throw new Error("userId is required.");
-  const ref = collection(db, USERS_COLLECTION, userId, FAVORITES_SUBCOLLECTION);
-  const snapshot = await getDocs(ref);
-  return snapshot.docs.map((d) => d.id);
+  return await favoritesRepository.findAll(userId);
 }
- 
+
 export async function isFavorited(userId, stockId) {
   if (!userId || !stockId) return false;
-  const snapshot = await getDoc(getFavoriteRef(userId, stockId));
-  return snapshot.exists();
+  return await favoritesRepository.exists(userId, stockId);
 }
- 
+
 export async function addFavorite(userId, stockId, ticker) {
   if (!userId) throw new Error("userId is required.");
   if (!stockId) throw new Error("stockId is required.");
-  await setDoc(getFavoriteRef(userId, stockId), {
-    ticker: ticker ?? "",
-    addedAt: new Date().toISOString(),
-  });
+  await favoritesRepository.save(userId, stockId, ticker);
 }
- 
+
 export async function removeFavorite(userId, stockId) {
   if (!userId) throw new Error("userId is required.");
   if (!stockId) throw new Error("stockId is required.");
-  await deleteDoc(getFavoriteRef(userId, stockId));
+  await favoritesRepository.delete(userId, stockId);
 }
- 
+
+// Business logic: toggle decides whether to add or remove based on current state.
+// That decision belongs in the service, not the repository.
 export async function toggleFavorite(userId, stockId, ticker) {
   const already = await isFavorited(userId, stockId);
   if (already) {
