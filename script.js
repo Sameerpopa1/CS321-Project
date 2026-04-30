@@ -379,8 +379,7 @@ searchBtn.onclick = async () => {
 
   const filtered = sampleStocks.filter((stock) =>
     stock.name.toLowerCase().includes(term) ||
-    stock.ticker.toLowerCase().includes(term) ||
-    stock.sector.toLowerCase().includes(term)
+    stock.ticker.toLowerCase().includes(term)
   );
 
   currentStocks = term === "" ? sampleStocks : filtered;
