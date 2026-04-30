@@ -2,7 +2,7 @@
 // Single responsibility: persist and retrieve stock metadata.
 import { db } from "./firebase-config.js";
 import {
-  collection, doc, getDocs, getDoc, setDoc, query, where
+  collection, doc, getDocs, getDoc, setDoc, deleteDoc, query, where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const COLLECTION = "stocks";
@@ -40,4 +40,9 @@ export class StockRepository {
   }
 }
 
+async delete(stockId) {
+    await deleteDoc(doc(db, COLLECTION, stockId));
+  }
+
 export const stockRepository = new StockRepository();
+
