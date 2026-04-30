@@ -1,5 +1,4 @@
 // firebase-config.js - sets up the Firestore connection used by all repositories.
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
