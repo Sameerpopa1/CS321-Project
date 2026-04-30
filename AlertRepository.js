@@ -2,6 +2,7 @@
 // Single responsibility: persist and retrieve user alerts.
 // Stored as a subcollection: users/{userId}/alerts
 
+
 import { db } from "./firebase-config.js";
 import {
   collection, doc, addDoc, getDocs, deleteDoc
