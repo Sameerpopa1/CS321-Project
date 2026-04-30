@@ -61,6 +61,12 @@ export async function addToWatchlist(ticker) {
     note: "",
   });
 }
+
+// REMOVE STOCK FROM WATCHLIST
+export async function removeFromWatchlist(stockId) {
+  if (!stockId) throw new Error("stockId is required.");
+  await stockRepository.delete(stockId);
+}
  
 // SEARCH (filtering happens in business logic, not the repository)
 export async function searchStocks(term) {
