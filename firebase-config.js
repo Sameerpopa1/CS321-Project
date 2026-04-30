@@ -4,7 +4,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebas
 
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDmqvy2Q6270NRl8fqSl6Zga5_jGHJLh0U",
-  authDomain: "AIzaSyDmqvy2Q6270NRl8fqSl6Zga5_jGHJLh0U",
+  authDomain: "stockscope-ea6f2.firebaseapp.com",
   projectId: "stockscope-ea6f2",
   storageBucket: "stockscope-ea6f2.firebasestorage.app",
   messagingSenderId: "1:437693959105:web:ad3c84e21621301e6cbd40",
