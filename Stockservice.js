@@ -1,36 +1,30 @@
-import { db } from "../firebase.js";
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  query,
-  where,
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// stockService.js - business logic for stocks.
+// Application layer. Combines stock metadata from Firestore with live prices from API.
+// Database calls go through StockRepository. API calls go through StockApiClient.
 
-const STOCKS_COLLECTION = "stocks";
+import { stockRepository } from "../db/StockRepository.js";
+import { stockApiClient } from "../db/StockApiClient.js";
+
+// Read Operation
 
 export async function getAllStocks() {
-  const snapshot = await getDocs(collection(db, STOCKS_COLLECTION));
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+  const stocks = await stockRepository.findAll();
+  return await Promise.all(stocks.map(s => enrichWithQuote(s)));
 }
 
 export async function getStockById(stockId) {
-  const ref = doc(db, STOCKS_COLLECTION, stockId);
-  const snapshot = await getDoc(ref);
-  if (!snapshot.exists()) return null;
-  return { id: snapshot.id, ...snapshot.data() };
+  const stock = await stockRepository.findById(stockId);
+  if (!stock) return null;
+  return await enrichWithQuote(stock);
 }
 
 export async function getStocksBySector(sector) {
   if (!sector || sector === "All") return getAllStocks();
-  const q = query(
-    collection(db, STOCKS_COLLECTION),
-    where("sector", "==", sector.trim())
-  );
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+  const stocks = await stockRepository.findBySector(sector);
+  return await Promise.all(stocks.map(s => enrichWithQuote(s)));
 }
+
+// Search
 
 export async function searchStocks(term) {
   if (!term || term.trim() === "") return getAllStocks();
@@ -43,6 +37,32 @@ export async function searchStocks(term) {
   );
 }
 
+// Sorting
+
 export function sortStocksAlphabetically(stocks) {
   return [...stocks].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+}
+
+
+// Combines stored metadata (name, sector) with a live price from the API.
+// Returns null for price fields if the API call fails - the rest of the app
+// can still display the stock with "N/A" for the price.
+async function enrichWithQuote(stock) {
+  try {
+    const quote = await stockApiClient.getQuote(stock.ticker);
+    return {
+      ...stock,
+      price: quote.price,
+      change: quote.change,
+      changePercent: quote.changePercent,
+    };
+  } catch (err) {
+    console.error(`Failed to fetch quote for ${stock.ticker}:`, err.message);
+    return {
+      ...stock,
+      price: null,
+      change: null,
+      changePercent: "N/A",
+    };
+  }
 }
