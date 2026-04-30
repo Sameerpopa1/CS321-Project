@@ -1,7 +1,7 @@
 // alertService.js - business logic for price alerts.
 // Application layer. Validation rules live here. Database calls go through AlertRepository.
 
-import { alertRepository } from "../db/AlertRepository.js";
+import { alertRepository } from "./AlertRepository.js";
 
 
 
