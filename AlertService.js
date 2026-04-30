@@ -1,14 +1,8 @@
-import { db } from "../firebase.js";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// alertService.js - business logic for price alerts.
+// Application layer. Validation rules live here. Database calls go through AlertRepository.
 
-const USERS_COLLECTION = "users";
-const ALERTS_SUBCOLLECTION = "alerts";
+import { alertRepository } from "../db/AlertRepository.js";
+
 
 export function validateTicker(value) {
   const trimmed = (value ?? "").trim().toUpperCase();
@@ -36,9 +30,11 @@ export function validateAlertForm(fields) {
   const tickerResult = validateTicker(fields.ticker);
   const priceResult = validatePrice(fields.price);
   const conditionResult = validateCondition(fields.condition);
+
   if (!tickerResult.valid) errors.ticker = tickerResult.msg;
   if (!priceResult.valid) errors.price = priceResult.msg;
   if (!conditionResult.valid) errors.condition = conditionResult.msg;
+
   if (Object.keys(errors).length > 0) return { errors };
   return {
     errors: {},
@@ -52,35 +48,32 @@ export function validateAlertForm(fields) {
 
 export async function addAlert(userId, alertData) {
   if (!userId) throw new Error("userId is required.");
+
   const { errors, parsed } = validateAlertForm(alertData);
   if (Object.keys(errors).length > 0)
     throw new Error("Invalid alert data: " + JSON.stringify(errors));
-  const ref = collection(db, USERS_COLLECTION, userId, ALERTS_SUBCOLLECTION);
-  const docRef = await addDoc(ref, {
+
+  const saved = await alertRepository.save(userId, {
     ticker: parsed.ticker,
     price: parsed.price,
     condition: parsed.condition,
     notify: alertData.notify ?? "email",
-    createdAt: new Date().toISOString(),
   });
-  return docRef.id;
+  return saved.id;
 }
 
 export async function getAlerts(userId) {
   if (!userId) throw new Error("userId is required.");
-  const ref = collection(db, USERS_COLLECTION, userId, ALERTS_SUBCOLLECTION);
-  const snapshot = await getDocs(ref);
-  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return await alertRepository.findAll(userId);
 }
 
 export async function removeAlert(userId, alertId) {
   if (!userId) throw new Error("userId is required.");
   if (!alertId) throw new Error("alertId is required.");
-  await deleteDoc(doc(db, USERS_COLLECTION, userId, ALERTS_SUBCOLLECTION, alertId));
+  await alertRepository.delete(userId, alertId);
 }
 
 export async function clearAllAlerts(userId) {
   if (!userId) throw new Error("userId is required.");
-  const alerts = await getAlerts(userId);
-  await Promise.all(alerts.map((a) => removeAlert(userId, a.id)));
+  await alertRepository.deleteAll(userId);
 }
