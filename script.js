@@ -1,8 +1,22 @@
-import { searchStocks, getAllStocks, getStocksBySector, getStockById } from "./StockService.js";
+import { searchStocks, getAllStocks, getStocksBySector, getStockById } from "./Stockservice.js";
 import { addAlert, getAlerts, removeAlert, clearAllAlerts } from "./AlertService.js";
 import { toggleFavorite, getFavorites } from "./FavoritesService.js";
 
 const USER_ID = "demoUser";
+
+// Temporary sample data for UI testing before backend integration
+const sampleStocks = [
+  { id: "TSLA", name: "Tesla", ticker: "TSLA", price: 175.50, changePercent: "-0.5%", sector: "Consumer", note: "Electric vehicle company." },
+  { id: "JPM", name: "JPMorgan Chase", ticker: "JPM", price: 150.30, changePercent: "+0.3%", sector: "Finance", note: "Banking and financial services." },
+  { id: "AAPL", name: "Apple Inc.", ticker: "AAPL", price: 190.25, changePercent: "+1.2%", sector: "Technology", note: "Technology company." },
+  { id: "XOM", name: "ExxonMobil", ticker: "XOM", price: 105.75, changePercent: "-1.1%", sector: "Energy", note: "Energy and oil company." },
+  { id: "PFE", name: "Pfizer", ticker: "PFE", price: 28.90, changePercent: "-0.7%", sector: "Healthcare", note: "Pharmaceutical company." },
+  { id: "MSFT", name: "Microsoft", ticker: "MSFT", price: 420.10, changePercent: "+0.8%", sector: "Technology", note: "Software and cloud company." },
+  { id: "NKE", name: "Nike", ticker: "NKE", price: 92.80, changePercent: "+0.6%", sector: "Consumer", note: "Sportswear and consumer brand." },
+  { id: "BAC", name: "Bank of America", ticker: "BAC", price: 36.25, changePercent: "-0.2%", sector: "Finance", note: "Banking company." },
+  { id: "CVX", name: "Chevron", ticker: "CVX", price: 158.40, changePercent: "+0.4%", sector: "Energy", note: "Energy company." },
+  { id: "JNJ", name: "Johnson & Johnson", ticker: "JNJ", price: 152.60, changePercent: "+0.5%", sector: "Healthcare", note: "Healthcare products company." }
+];
 
 const backToAllBtn = document.getElementById("backToAllBtn");
 const pageTitle = document.getElementById("pageTitle");
@@ -44,11 +58,16 @@ async function loadAndRenderStocks() {
       stocks = await getAllStocks();
     }
 
+    if (!stocks || stocks.length === 0) {
+      stocks = sampleStocks;
+    }
+
     currentStocks = stocks;
     renderStocks(stocks);
   } catch (err) {
-    console.error(err);
-    list.innerHTML = `<p>Could not load stocks.</p>`;
+    console.log("Using sample data instead");
+    currentStocks = sampleStocks;
+    renderStocks(sampleStocks);
   }
 }
 
@@ -110,7 +129,10 @@ function renderStocks(stocks) {
 
 async function showDetail(stockId) {
   try {
-    const stock = await getStockById(stockId);
+    let stock = await getStockById(stockId);
+    if (!stock) {
+      stock = sampleStocks.find((s) => (s.id || s.ticker) === stockId);
+    }
     if (!stock) return;
 
     currentDetailId = stock.id || stock.ticker;
@@ -332,14 +354,31 @@ searchBtn.onclick = async () => {
 
   try {
     const results = await searchStocks(term);
-    currentStocks = results;
-    renderStocks(results);
+    const displayResults = results && results.length > 0
+      ? results
+      : sampleStocks.filter((stock) =>
+          stock.name.toLowerCase().includes(term.toLowerCase()) ||
+          stock.ticker.toLowerCase().includes(term.toLowerCase()) ||
+          stock.sector.toLowerCase().includes(term.toLowerCase())
+        );
+
+    currentStocks = displayResults;
+    renderStocks(displayResults);
 
     pageTitle.textContent = term === "" ? "My Stock Site" : `Search Results: ${term}`;
     backToAllBtn.style.display = term === "" ? "none" : "block";
   } catch (err) {
-    console.error(err);
-    list.innerHTML = `<p>Search failed.</p>`;
+    const filtered = sampleStocks.filter((stock) =>
+      stock.name.toLowerCase().includes(term.toLowerCase()) ||
+      stock.ticker.toLowerCase().includes(term.toLowerCase()) ||
+      stock.sector.toLowerCase().includes(term.toLowerCase())
+    );
+
+    currentStocks = filtered;
+    renderStocks(filtered);
+
+    pageTitle.textContent = term === "" ? "My Stock Site" : `Search Results: ${term}`;
+    backToAllBtn.style.display = term === "" ? "none" : "block";
   }
 };
 
