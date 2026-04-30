@@ -2,6 +2,7 @@
 // Single responsibility: persist and retrieve user favorites.
 // Stored as a subcollection: users/{userId}/favorites
 
+
 import { db } from "./firebase-config.js";
 import {
   collection, doc, getDocs, getDoc, setDoc, deleteDoc
