@@ -1,7 +1,7 @@
 // favoritesService.js - business logic for favorite stocks.
 // Application layer. Database calls go through FavoritesRepository.
 
-import { favoritesRepository } from "../db/FavoritesRepository.js";
+import { favoritesRepository } from "./FavoritesRepository.js";
 
 export async function getFavorites(userId) {
   if (!userId) throw new Error("userId is required.");

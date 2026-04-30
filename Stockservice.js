@@ -2,8 +2,8 @@
 // Application layer. Combines stock metadata from Firestore with live prices from API.
 // Database calls go through StockRepository. API calls go through StockApiClient.
 
-import { stockRepository } from "../db/StockRepository.js";
-import { stockApiClient } from "../db/StockApiClient.js";
+import { stockRepository } from "./StockRepository.js";
+import { stockApiClient } from "./StockApiClient.js";
 
 
 // Read Operation
