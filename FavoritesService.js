@@ -8,6 +8,7 @@ export async function getFavorites(userId) {
   return await favoritesRepository.findAll(userId);
 }
 
+
 export async function isFavorited(userId, stockId) {
   if (!userId || !stockId) return false;
   return await favoritesRepository.exists(userId, stockId);
