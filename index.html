@@ -19,7 +19,8 @@
       </div>
 
       <nav class="utilities">
-        <a href="#">Login</a>
+        <span class="user-indicator" id="userIndicator">Guest</span>
+        <a href="#" id="loginLink">Login</a>
         <a href="#">Portfolio</a>
         <a href="#">Settings</a>
       </nav>
@@ -64,6 +65,17 @@
           <a href="#" class="sectorLink" data-sector="Finance">Finance</a>
           <a href="#" class="sectorLink" data-sector="Consumer">Consumer</a>
           <a href="#" id="favoritesLink">Favorites</a>
+        </div>
+        <!-- Add Stock Panel -->
+        <div class="sidebar-card">
+          <p class="sidebar-label">Add to Watchlist</p>
+          <div class="form-group">
+            <label for="addStockTicker">Stock Ticker</label>
+            <input type="text" id="addStockTicker" placeholder="e.g. AAPL" maxlength="5" />
+            <span class="field-error" id="addStockError"></span>
+          </div>
+          <button class="submit-btn" id="addStockBtn" type="button">Add Stock</button>
+          <div class="form-success" id="addStockSuccess"></div>
         </div>
         <!-- Alert Panel -->
           <div class="sidebar-card alert-panel">
@@ -201,6 +213,22 @@
       <a href="#">Privacy</a>
       <a href="#" id="footerContactLink">Contact</a>
     </footer>
+
+    <div id="loginModal" class="modal-overlay">
+      <div class="modal-box">
+        <button id="closeLoginBtn" class="modal-close">×</button>
+        <h2>Sign in</h2>
+        <p>Enter a username to save your watchlist favorites and alerts.</p>
+        <div class="form-group" style="margin-top:14px;">
+          <label for="loginInput">Username</label>
+          <input type="text" id="loginInput" placeholder="e.g. sameer" maxlength="32" />
+          <span class="field-error" id="loginError"></span>
+        </div>
+        <button class="submit-btn" id="submitLoginBtn" type="button">Continue</button>
+      </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
 
     <div id="contactModal" class="modal-overlay">
       <div class="modal-box">
