@@ -1,6 +1,5 @@
 // StockRepository - handles Firestore CRUD for the "stocks" collection.
 // Single responsibility: persist and retrieve stock metadata.
-
 import { db } from "./firebase-config.js";
 import {
   collection, doc, getDocs, getDoc, setDoc, query, where
