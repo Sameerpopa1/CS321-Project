@@ -38,11 +38,11 @@ export class StockRepository {
     });
     return stock;
   }
-}
 
-async delete(stockId) {
+  async delete(stockId) {
     await deleteDoc(doc(db, COLLECTION, stockId));
   }
+}
 
 export const stockRepository = new StockRepository();
 
