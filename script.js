@@ -49,25 +49,44 @@ async function loadAndRenderStocks() {
     if (showingFavorites) {
       const favoriteIds = await getFavorites(USER_ID);
       const allStocks = await getAllStocks();
+
       stocks = allStocks.filter((stock) =>
         favoriteIds.includes(stock.id) || favoriteIds.includes(stock.ticker)
       );
+
+      if (!stocks || stocks.length === 0) {
+        stocks = sampleStocks.filter((stock) => stock.favorite);
+      }
+
     } else if (currentSector !== "All") {
       stocks = await getStocksBySector(currentSector);
+
+      if (!stocks || stocks.length === 0) {
+        stocks = sampleStocks.filter((stock) => stock.sector === currentSector);
+      }
+
     } else {
       stocks = await getAllStocks();
-    }
 
-    if (!stocks || stocks.length === 0) {
-      stocks = sampleStocks;
+      if (!stocks || stocks.length === 0) {
+        stocks = sampleStocks;
+      }
     }
 
     currentStocks = stocks;
     renderStocks(stocks);
+
   } catch (err) {
-    console.log("Using sample data instead");
-    currentStocks = sampleStocks;
-    renderStocks(sampleStocks);
+    let fallbackStocks = sampleStocks;
+
+    if (showingFavorites) {
+      fallbackStocks = sampleStocks.filter((stock) => stock.favorite);
+    } else if (currentSector !== "All") {
+      fallbackStocks = sampleStocks.filter((stock) => stock.sector === currentSector);
+    }
+
+    currentStocks = fallbackStocks;
+    renderStocks(fallbackStocks);
   }
 }
 
@@ -117,11 +136,17 @@ function renderStocks(stocks) {
 
   document.querySelectorAll(".heart-btn").forEach((btn) => {
     btn.onclick = async () => {
-      try {
-        await toggleFavorite(USER_ID, btn.dataset.id, btn.dataset.ticker);
+      const stockId = btn.dataset.id;
+      const stock = sampleStocks.find((s) => s.id === stockId || s.ticker === stockId);
+
+      if (stock) {
+        stock.favorite = !stock.favorite;
+      }
+
+      btn.classList.toggle("active");
+
+      if (showingFavorites) {
         await loadAndRenderStocks();
-      } catch (err) {
-        console.error(err);
       }
     };
   });
@@ -344,7 +369,7 @@ document.querySelectorAll(".sectorLink").forEach((link) => {
 });
 
 searchBtn.onclick = async () => {
-  const term = searchInput.value.trim();
+  const term = searchInput.value.trim().toLowerCase();
 
   detail.classList.remove("active");
   listView.style.display = "block";
@@ -352,34 +377,17 @@ searchBtn.onclick = async () => {
   showingFavorites = false;
   currentSector = "All";
 
-  try {
-    const results = await searchStocks(term);
-    const displayResults = results && results.length > 0
-      ? results
-      : sampleStocks.filter((stock) =>
-          stock.name.toLowerCase().includes(term.toLowerCase()) ||
-          stock.ticker.toLowerCase().includes(term.toLowerCase()) ||
-          stock.sector.toLowerCase().includes(term.toLowerCase())
-        );
+  const filtered = sampleStocks.filter((stock) =>
+    stock.name.toLowerCase().includes(term) ||
+    stock.ticker.toLowerCase().includes(term) ||
+    stock.sector.toLowerCase().includes(term)
+  );
 
-    currentStocks = displayResults;
-    renderStocks(displayResults);
+  currentStocks = term === "" ? sampleStocks : filtered;
+  renderStocks(currentStocks);
 
-    pageTitle.textContent = term === "" ? "My Stock Site" : `Search Results: ${term}`;
-    backToAllBtn.style.display = term === "" ? "none" : "block";
-  } catch (err) {
-    const filtered = sampleStocks.filter((stock) =>
-      stock.name.toLowerCase().includes(term.toLowerCase()) ||
-      stock.ticker.toLowerCase().includes(term.toLowerCase()) ||
-      stock.sector.toLowerCase().includes(term.toLowerCase())
-    );
-
-    currentStocks = filtered;
-    renderStocks(filtered);
-
-    pageTitle.textContent = term === "" ? "My Stock Site" : `Search Results: ${term}`;
-    backToAllBtn.style.display = term === "" ? "none" : "block";
-  }
+  pageTitle.textContent = term === "" ? "My Stock Site" : `Search Results: ${searchInput.value}`;
+  backToAllBtn.style.display = term === "" ? "none" : "block";
 };
 
 searchInput.addEventListener("keydown", (e) => {
